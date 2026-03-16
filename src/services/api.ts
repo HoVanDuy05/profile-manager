@@ -80,4 +80,10 @@ export const mediaService = {
   delete: (id: number) => api.delete(`/media/${id}`),
 };
 
+export const settingsService = {
+  getLoginHistory: () => api.get('/settings/login-history'),
+  getActivityLogs: () => api.get('/settings/activity-logs'),
+  getActiveSessions: () => api.get('/settings/active-sessions'),
+};
+
 export default api;

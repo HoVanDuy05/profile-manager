@@ -12,6 +12,7 @@ export const ROUTES = {
   EXPERIENCE: '/experience',
   MEDIA: '/media',
   MESSAGES: '/messages',
+  SETTINGS: '/settings',
 };
 
 export const DEFAULT_TRANSITIONS = {

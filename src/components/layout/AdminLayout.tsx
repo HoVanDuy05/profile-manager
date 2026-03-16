@@ -9,7 +9,8 @@ import {
   IconMessages,
   IconLogout,
   IconFingerprint,
-  IconPhoto
+  IconPhoto,
+  IconSettings
 } from '@tabler/icons-react';
 import { Link, useLocation } from 'react-router-dom';
 import { ReactNode } from 'react';
@@ -29,6 +30,7 @@ const navLinks = [
   { icon: IconBriefcase, label: 'Experience', path: ROUTES.EXPERIENCE },
   { icon: IconPhoto, label: 'Media', path: ROUTES.MEDIA },
   { icon: IconMessages, label: 'Messages', path: ROUTES.MESSAGES },
+  { icon: IconSettings, label: 'Settings', path: ROUTES.SETTINGS },
 ];
 
 const AdminLayout = ({ children }: AdminLayoutProps) => {
@@ -95,7 +97,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
 
       <AppShell.Navbar p="md" style={{ borderRight: '1px solid var(--mantine-color-default-border)' }}>
         <AppShell.Section grow component={ScrollArea} mx="-md" px="md">
-          <Stack gap={4}>
+          <Stack gap={4} align={collapsed ? "center" : "stretch"}>
             {!collapsed && (
               <Box px="md" mb={12} mt="lg">
                 <Text 
@@ -115,35 +117,43 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
               </Box>
             )}
             {navLinks.map((item) => (
-              <Tooltip label={collapsed ? item.label : ''} position="right" transitionProps={{ duration: 0 }}>
-                <NavLink
-                  key={item.path}
-                  component={Link}
-                  to={item.path}
-                  label={!collapsed && <Text fw={600} fz="sm">{item.label}</Text>}
-                  leftSection={<item.icon size={20} stroke={2} color={location.pathname === item.path ? 'var(--mantine-color-violet-6)' : 'var(--mantine-color-gray-6)'} />}
-                  active={location.pathname === item.path}
-                  onClick={opened ? toggle : undefined}
-                  h={46}
-                  variant="light"
-                  color="violet"
-                  styles={{
-                    root: {
-                      borderRadius: 'var(--mantine-radius-md)',
-                      transition: 'all 0.2s ease',
-                      marginBottom: rem(2),
-                      justifyContent: collapsed ? 'center' : 'flex-start',
-                      padding: collapsed ? '0' : undefined,
-                    },
-                    label: {
-                      color: location.pathname === item.path ? 'var(--mantine-color-violet-9)' : 'var(--mantine-color-gray-7)',
-                      display: collapsed ? 'none' : 'block',
-                    },
-                    section: {
-                      margin: collapsed ? 0 : undefined
-                    }
-                  }}
-                />
+              <Tooltip key={item.path} label={collapsed ? item.label : ''} position="right" transitionProps={{ duration: 0 }}>
+                {collapsed ? (
+                  <ActionIcon
+                    component={Link}
+                    to={item.path}
+                    variant={location.pathname === item.path ? 'light' : 'subtle'}
+                    color={location.pathname === item.path ? 'violet' : 'gray'}
+                    size={46}
+                    radius="md"
+                    mb={4}
+                    onClick={opened ? toggle : undefined}
+                  >
+                    <item.icon size={22} stroke={2} />
+                  </ActionIcon>
+                ) : (
+                  <NavLink
+                    component={Link}
+                    to={item.path}
+                    label={<Text fw={600} fz="sm">{item.label}</Text>}
+                    leftSection={<item.icon size={20} stroke={2} color={location.pathname === item.path ? 'var(--mantine-color-violet-6)' : 'var(--mantine-color-gray-6)'} />}
+                    active={location.pathname === item.path}
+                    onClick={opened ? toggle : undefined}
+                    h={46}
+                    variant="light"
+                    color="violet"
+                    styles={{
+                      root: {
+                        borderRadius: 'var(--mantine-radius-md)',
+                        transition: 'all 0.2s ease',
+                        marginBottom: rem(2),
+                      },
+                      label: {
+                        color: location.pathname === item.path ? 'var(--mantine-color-violet-9)' : 'var(--mantine-color-gray-7)',
+                      }
+                    }}
+                  />
+                )}
               </Tooltip>
             ))}
           </Stack>

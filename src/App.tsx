@@ -17,6 +17,7 @@ import ExperienceManager from './pages/ExperienceManager';
 import MediaManager from './pages/MediaManager';
 import MessagesInbox from './pages/MessagesInbox';
 import LoginPage from './pages/LoginPage';
+import SettingsPage from './pages/SettingsPage';
  
 // Protected Route Component
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -66,6 +67,7 @@ function App() {
                         <Route path="/experience" element={<ExperienceManager />} />
                         <Route path="/media" element={<MediaManager />} />
                         <Route path="/messages" element={<MessagesInbox />} />
+                        <Route path="/settings" element={<SettingsPage />} />
                       </Routes>
                     </AdminLayout>
                   </ProtectedRoute>
