@@ -142,7 +142,7 @@ const SettingsPage = () => {
                         <Badge color="green" size="xs">Active Now</Badge>
                       </Group>
                       <Text size="xs" c="dimmed" mb={8}>Last used: {dayjs(session.last_used_at).fromNow()}</Text>
-                      <Code size="xs">ID: {session.id.toString().substring(0, 8)}...</Code>
+                      <Code __size="xs">ID: {session.id.toString().substring(0, 8)}...</Code>
                     </Card>
                   ))}
                   {(!activeSessions || activeSessions.length === 0) && (
