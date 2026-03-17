@@ -34,12 +34,21 @@ export interface Skill {
 export interface Project {
   id: number;
   title: string;
+  slug: string;
+  subtitle?: string;
   description: string;
+  content?: string;
   image: string;
   tags: string[];
   demo_link?: string;
   github_link?: string;
-  featured: boolean;
+  live_link?: string;
+  source_code_zip?: string;
+  folder_structure?: any[];
+  is_featured: boolean;
+  sort_order: number;
+  custom_fields_count?: number;
+  custom_fields?: any[];
 }
 
 export interface Experience {

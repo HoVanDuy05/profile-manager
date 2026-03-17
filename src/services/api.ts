@@ -2,6 +2,18 @@ import axios from 'axios';
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
+export const getImageUrl = (url: string | null | undefined) => {
+  if (!url) return '';
+  if (url.startsWith('http')) return url;
+  
+  // Standardize the base URL: remove trailing /api and trailing /
+  const baseUrl = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/api$/, '').replace(/\/$/, '');
+  const path = url.startsWith('/') ? url : `/${url}`;
+  
+  // Ensure we don't have double slashes if baseUrl somehow kept one or path started with one
+  return `${baseUrl.replace(/\/$/, '')}/${path.replace(/^\//, '')}`;
+};
+
 const api = axios.create({
   baseURL: API_BASE_URL,
   headers: {
@@ -50,9 +62,26 @@ export const skillService = {
 
 export const projectService = {
   getAll: () => api.get('/projects'),
-  create: (data: any) => api.post('/projects', data),
-  update: (id: number, data: any) => api.put(`/projects/${id}`, data),
-  delete: (id: number) => api.delete(`/projects/${id}`),
+  getById: (id: number | string) => api.get(`/projects/${id}`),
+  create: (data: any) => {
+    if (data instanceof FormData) {
+      return api.post('/projects', data, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+    }
+    return api.post('/projects', data);
+  },
+  update: (id: number | string, data: any) => {
+    if (data instanceof FormData) {
+      // Laravel requires _method=PUT for multipart/form-data updates
+      data.append('_method', 'PUT');
+      return api.post(`/projects/${id}`, data, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+      });
+    }
+    return api.put(`/projects/${id}`, data);
+  },
+  delete: (id: number | string) => api.delete(`/projects/${id}`),
 };
 
 export const experienceService = {
@@ -85,6 +114,10 @@ export const settingsService = {
   getLoginHistory: () => api.get('/settings/login-history'),
   getActivityLogs: () => api.get('/settings/activity-logs'),
   getActiveSessions: () => api.get('/settings/active-sessions'),
+};
+
+export const dashboardService = {
+  getStats: () => api.get('/dashboard/stats'),
 };
 
 export default api;

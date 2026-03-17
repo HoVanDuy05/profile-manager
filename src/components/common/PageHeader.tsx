@@ -11,10 +11,11 @@ interface PageHeaderProps {
   title: string;
   description?: string;
   breadcrumbs?: BreadcrumbItem[];
+  leftSection?: React.ReactNode;
   rightSection?: React.ReactNode;
 }
 
-export function PageHeader({ title, description, breadcrumbs, rightSection }: PageHeaderProps) {
+export function PageHeader({ title, description, breadcrumbs, leftSection, rightSection }: PageHeaderProps) {
   const items = breadcrumbs?.map((item, index) => (
     <Anchor component={Link} to={item.href || '#'} key={index} size="xs" c="dimmed">
       {item.title}
@@ -43,17 +44,20 @@ export function PageHeader({ title, description, breadcrumbs, rightSection }: Pa
       >
         {items && items.length > 0 && <Breadcrumbs mb="xs">{items}</Breadcrumbs>}
 
-        <Group justify="space-between" align="flex-end">
-          <div>
-            <Title order={1} fz={rem(16)} fw={800} style={{ letterSpacing: '-0.02em' }}>
-              {title}
-            </Title>
-            {description && (
-              <Text c="dimmed" size="sm" mt={4}>
-                {description}
-              </Text>
-            )}
-          </div>
+        <Group justify="space-between" align="flex-end" wrap="nowrap">
+          <Group gap="md" align="flex-start" wrap="nowrap">
+            {leftSection && <Box pt={4}>{leftSection}</Box>}
+            <div>
+              <Title order={1} fz={rem(18)} fw={800} style={{ letterSpacing: '-0.02em' }}>
+                {title}
+              </Title>
+              {description && (
+                <Text c="dimmed" size="sm" mt={4}>
+                  {description}
+                </Text>
+              )}
+            </div>
+          </Group>
           {rightSection && <div>{rightSection}</div>}
         </Group>
       </motion.div>

@@ -56,10 +56,6 @@ export const theme = createTheme({
           borderRadius: theme.radius.md,
           fontWeight: 600,
           transition: 'all 0.2s ease',
-          '&[data-active="true"]': {
-            backgroundColor: theme.colors.violet[0],
-            color: theme.colors.violet[7],
-          }
         },
       })
     }

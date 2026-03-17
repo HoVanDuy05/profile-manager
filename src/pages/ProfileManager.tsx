@@ -39,7 +39,7 @@ import {
 import { DateInput } from '@mantine/dates';
 import { PageHeader } from '../components/common/PageHeader';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { profileService } from '../services/api';
+import { profileService, getImageUrl } from '../services/api';
 import { notifications } from '@mantine/notifications';
 import { Profile } from '../types';
 import { useDisclosure } from '@mantine/hooks';
@@ -144,7 +144,7 @@ const ProfileManager = () => {
               <Stack align="center" gap="md">
                 <Box pos="relative">
                   <Avatar
-                    src={form.values.avatar ? (form.values.avatar.startsWith('/') ? `${import.meta.env.VITE_API_BASE_URL.replace('/api', '')}${form.values.avatar}` : form.values.avatar) : null}
+                    src={getImageUrl(form.values.avatar)}
                     size={rem(160)}
                     radius={rem(80)}
                     mx="auto"
@@ -310,7 +310,7 @@ const ProfileManager = () => {
                 label="Professional Bio"
                 placeholder="Write a brief introduction about yourself..."
                 minRows={6}
-                required
+                className='h-[400px]'
                 leftSection={<IconAlignLeft size={18} />}
                 {...form.getInputProps('bio')}
               />

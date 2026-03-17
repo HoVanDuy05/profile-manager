@@ -62,15 +62,12 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
                 </Title>
               </Group>
             </Box>
-            <ActionIcon 
-              variant="subtle" 
-              color="gray" 
+            <Burger 
+              opened={!collapsed} 
               onClick={toggleCollapsed} 
               visibleFrom="sm"
-              size="lg"
-            >
-              <Burger opened={!collapsed} size="sm" />
-            </ActionIcon>
+              size="sm"
+            />
           </Group>
 
           <Group gap="md">

@@ -17,7 +17,7 @@ import {
   IconPhoto,
 } from '@tabler/icons-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { mediaService } from '../../services/api';
+import { mediaService, getImageUrl } from '../../services/api';
 import { notifications } from '@mantine/notifications';
 import { useState } from 'react';
  
@@ -109,12 +109,12 @@ export const MediaGallery = ({ onSelect, isStandalone = false }: MediaGalleryPro
                   onClick={() => setSelectedItem(item)}
                 >
                   <Image
-                    src={item.url.startsWith('/storage') ? `${import.meta.env.VITE_API_BASE_URL.replace('/api', '')}${item.url}` : item.url}
+                    src={getImageUrl(item.url)}
                     height={120}
                     radius="sm"
-                    fit="contain"
+                    fit="cover"
                     bg="gray.1"
-                    fallbackSrc="https://placehold.co/200x200?text=No+Preview"
+                    fallbackSrc="https://placehold.co/400x400?text=No+Preview"
                   />
                 </Card>
               ))}
@@ -143,7 +143,7 @@ export const MediaGallery = ({ onSelect, isStandalone = false }: MediaGalleryPro
                 justifyContent: 'center'
               }}>
                 <Image
-                  src={selectedItem.url.startsWith('/storage') ? `${import.meta.env.VITE_API_BASE_URL.replace('/api', '')}${selectedItem.url}` : selectedItem.url}
+                  src={getImageUrl(selectedItem.url)}
                   fallbackSrc="https://placehold.co/200x200?text=No+Preview"
                   mah={220}
                   style={{ objectFit: 'contain', width: '100%' }}

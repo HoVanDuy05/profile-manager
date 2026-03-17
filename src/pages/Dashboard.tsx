@@ -1,15 +1,35 @@
-import { Text, SimpleGrid, Card, Group, ThemeIcon, rem, Stack, Progress, Badge, Avatar, ActionIcon } from '@mantine/core';
-import { IconCode, IconFolder, IconUser, IconMessages, IconTrendingUp, IconArrowUpRight } from '@tabler/icons-react';
+import { Text, SimpleGrid, Card, Group, ThemeIcon, rem, Stack, Progress, Badge, Avatar, ActionIcon, LoadingOverlay } from '@mantine/core';
+import { 
+  IconCode, 
+  IconFolder, 
+  IconUser, 
+  IconMessages, 
+  IconTrendingUp, 
+  IconArrowUpRight,
+  IconBriefcase,
+  IconClock
+} from '@tabler/icons-react';
 import { PageHeader } from '../components/common/PageHeader';
 import { motion } from 'framer-motion';
+import { useQuery } from '@tanstack/react-query';
+import { dashboardService } from '../services/api';
+
+const iconMap: Record<string, any> = {
+  IconCode,
+  IconFolder,
+  IconBriefcase,
+  IconMessages,
+};
 
 const Dashboard = () => {
-  const stats = [
-    { title: 'Total Skills', value: '18', icon: IconCode, color: 'blue', trend: '+2 this month' },
-    { title: 'Active Projects', value: '6', icon: IconFolder, color: 'violet', trend: '1 featured' },
-    { title: 'Experience', value: '4 yrs', icon: IconUser, color: 'teal', trend: 'Senior Level' },
-    { title: 'Unread Messages', value: '3', icon: IconMessages, color: 'pink', trend: 'High priority' },
-  ];
+  const { data: dashboardResponse, isLoading } = useQuery({
+    queryKey: ['dashboard-stats'],
+    queryFn: () => dashboardService.getStats(),
+  });
+
+  const stats = dashboardResponse?.data?.stats || [];
+  const activities = dashboardResponse?.data?.recent_activities || [];
+  const completion = dashboardResponse?.data?.completion || [];
 
   return (
     <Stack gap="xl">
@@ -18,38 +38,45 @@ const Dashboard = () => {
         description="Quick overview of your professional portfolio status."
       />
 
-      <SimpleGrid cols={{ base: 1, sm: 2, lg: 4 }} spacing="xl">
-        {stats.map((stat, index) => (
-          <motion.div
-            key={stat.title}
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: index * 0.1 }}
-          >
-            <Card withBorder padding="lg" radius="lg" style={{ overflow: 'visible' }}>
-              <Group justify="space-between" align="flex-start" mb="md">
-                <ThemeIcon
-                  color={stat.color}
-                  variant="light"
-                  size={48}
-                  radius="md"
-                  style={{ boxShadow: `0 8px 16px -4px var(--mantine-color-${stat.color}-light)` }}
-                >
-                  <stat.icon style={{ width: rem(24), height: rem(24) }} stroke={1.5} />
-                </ThemeIcon>
-                <Badge variant="dot" color={stat.color} size="sm">{stat.trend}</Badge>
-              </Group>
+      <div style={{ position: 'relative', minHeight: rem(100) }}>
+        <LoadingOverlay visible={isLoading} overlayProps={{ radius: 'sm', blur: 2 }} />
+        
+        <SimpleGrid cols={{ base: 1, sm: 2, lg: 4 }} spacing="xl">
+          {stats.map((stat: any, index: number) => {
+            const Icon = iconMap[stat.icon] || IconCode;
+            return (
+              <motion.div
+                key={stat.title}
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: index * 0.1 }}
+              >
+                <Card withBorder padding="lg" radius="lg" style={{ overflow: 'visible' }}>
+                  <Group justify="space-between" align="flex-start" mb="md">
+                    <ThemeIcon
+                      color={stat.color}
+                      variant="light"
+                      size={48}
+                      radius="md"
+                      style={{ boxShadow: `0 8px 16px -4px var(--mantine-color-${stat.color}-light)` }}
+                    >
+                      <Icon style={{ width: rem(24), height: rem(24) }} stroke={1.5} />
+                    </ThemeIcon>
+                    <Badge variant="dot" color={stat.color} size="sm">{stat.trend}</Badge>
+                  </Group>
 
-              <Text c="dimmed" tt="uppercase" fw={800} fz="xs" style={{ letterSpacing: '0.05em' }}>
-                {stat.title}
-              </Text>
-              <Text fz={rem(28)} fw={900}>
-                {stat.value}
-              </Text>
-            </Card>
-          </motion.div>
-        ))}
-      </SimpleGrid>
+                  <Text c="dimmed" tt="uppercase" fw={800} fz="xs" style={{ letterSpacing: '0.05em' }}>
+                    {stat.title}
+                  </Text>
+                  <Text fz={rem(28)} fw={900}>
+                    {stat.value}
+                  </Text>
+                </Card>
+              </motion.div>
+            );
+          })}
+        </SimpleGrid>
+      </div>
 
       <SimpleGrid cols={{ base: 1, lg: 2 }} spacing="xl">
         <Card withBorder radius="lg">
@@ -62,29 +89,16 @@ const Dashboard = () => {
           </Group>
 
           <Stack gap="md">
-            <div>
-              <Group justify="space-between" mb={5}>
-                <Text size="sm" fw={600}>Basic Information</Text>
-                <Text size="sm" c="violet.6" fw={700}>100%</Text>
-              </Group>
-              <Progress value={100} color="violet" size="sm" radius="xl" />
-            </div>
-
-            <div>
-              <Group justify="space-between" mb={5}>
-                <Text size="sm" fw={600}>Project Documentation</Text>
-                <Text size="sm" c="violet.6" fw={700}>65%</Text>
-              </Group>
-              <Progress value={65} color="violet" size="sm" radius="xl" />
-            </div>
-
-            <div>
-              <Group justify="space-between" mb={5}>
-                <Text size="sm" fw={600}>Skills Endorsement</Text>
-                <Text size="sm" c="violet.4" fw={700}>40%</Text>
-              </Group>
-              <Progress value={40} color="violet.3" size="sm" radius="xl" />
-            </div>
+            {completion.map((item: any) => (
+              <div key={item.label}>
+                <Group justify="space-between" mb={5}>
+                  <Text size="sm" fw={600}>{item.label}</Text>
+                  <Text size="sm" c="violet.6" fw={700}>{item.value}%</Text>
+                </Group>
+                <Progress value={item.value} color="violet" size="sm" radius="xl" />
+              </div>
+            ))}
+            {completion.length === 0 && !isLoading && <Text size="sm" c="dimmed">No completion data available.</Text>}
           </Stack>
         </Card>
 
@@ -97,18 +111,19 @@ const Dashboard = () => {
           </Group>
 
           <Stack gap="lg">
-            {[1, 2, 3].map((i) => (
-              <Group key={i} gap="md">
+            {activities.map((activity: any) => (
+              <Group key={activity.id} gap="md">
                 <Avatar radius="xl" color="violet" variant="light">
-                  <IconMessages size={20} />
+                  <IconClock size={20} />
                 </Avatar>
                 <div style={{ flex: 1 }}>
-                  <Text size="sm" fw={700}>New message from Recruiter</Text>
-                  <Text size="xs" c="dimmed">"Hi Duy, I saw your portfolio and..."</Text>
+                  <Text size="sm" fw={700}>{activity.activity}</Text>
+                  <Text size="xs" c="dimmed">{activity.user?.name || 'System'}</Text>
                 </div>
-                <Text size="xs" c="dimmed">2h ago</Text>
+                <Text size="xs" c="dimmed">{new Date(activity.created_at).toLocaleTimeString()}</Text>
               </Group>
             ))}
+            {activities.length === 0 && !isLoading && <Text size="sm" c="dimmed">No recent activities found.</Text>}
           </Stack>
         </Card>
       </SimpleGrid>

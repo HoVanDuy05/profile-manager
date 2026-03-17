@@ -13,20 +13,21 @@ import Dashboard from './pages/Dashboard';
 import ProfileManager from './pages/ProfileManager';
 import SkillsManager from './pages/SkillsManager';
 import ProjectsManager from './pages/ProjectsManager';
+import ProjectEditor from './pages/ProjectEditor';
 import ExperienceManager from './pages/ExperienceManager';
 import MediaManager from './pages/MediaManager';
 import MessagesInbox from './pages/MessagesInbox';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import SettingsPage from './pages/SettingsPage';
- 
+
 // Protected Route Component
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated, isLoading } = useAuth();
- 
+
   if (isLoading) return null;
   if (!isAuthenticated) return <Navigate to="/login" replace />;
- 
+
   return <>{children}</>;
 };
 
@@ -66,6 +67,8 @@ function App() {
                         <Route path="/profile" element={<ProfileManager />} />
                         <Route path="/skills" element={<SkillsManager />} />
                         <Route path="/projects" element={<ProjectsManager />} />
+                        <Route path="/projects/new" element={<ProjectEditor />} />
+                        <Route path="/projects/:id" element={<ProjectEditor />} />
                         <Route path="/experience" element={<ExperienceManager />} />
                         <Route path="/media" element={<MediaManager />} />
                         <Route path="/messages" element={<MessagesInbox />} />
