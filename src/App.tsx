@@ -17,6 +17,7 @@ import ExperienceManager from './pages/ExperienceManager';
 import MediaManager from './pages/MediaManager';
 import MessagesInbox from './pages/MessagesInbox';
 import LoginPage from './pages/LoginPage';
+import RegisterPage from './pages/RegisterPage';
 import SettingsPage from './pages/SettingsPage';
  
 // Protected Route Component
@@ -54,6 +55,7 @@ function App() {
           <BrowserRouter>
             <Routes>
               <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
               <Route
                 path="/*"
                 element={

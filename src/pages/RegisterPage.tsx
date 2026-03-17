@@ -11,54 +11,58 @@ import {
   Box, 
   rem, 
   Stack,
-  Notification,
   Anchor
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import { IconFingerprint, IconAt, IconLock, IconLogin } from '@tabler/icons-react';
+import { IconFingerprint, IconAt, IconLock, IconUser, IconUserPlus } from '@tabler/icons-react';
 import { useAuth } from '../context/AuthContext';
 import { authService } from '../services/api';
 import { useNavigate, Link } from 'react-router-dom';
 import { notifications } from '@mantine/notifications';
- 
-const LoginPage = () => {
+
+const RegisterPage = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = React.useState(false);
- 
+
   const form = useForm({
     initialValues: {
+      name: '',
       email: '',
       password: '',
+      password_confirmation: '',
     },
     validate: {
+      name: (value) => (value.length < 2 ? 'Name must have at least 2 characters' : null),
       email: (value) => (/^\S+@\S+$/.test(value) ? null : 'Invalid email'),
-      password: (value) => (value.length < 1 ? 'Password is required' : null),
+      password: (value) => (value.length < 8 ? 'Password must have at least 8 characters' : null),
+      password_confirmation: (value, values) => 
+        value !== values.password ? 'Passwords did not match' : null,
     },
   });
- 
+
   const handleSubmit = async (values: typeof form.values) => {
     setLoading(true);
     try {
-      const response = await authService.login(values);
+      const response = await authService.register(values);
       login(response.data);
       notifications.show({
-        title: 'Login Successful',
-        message: `Welcome back, ${response.data.user.name}!`,
+        title: 'Registration Successful',
+        message: `Welcome, ${response.data.user.name}! Your account has been created.`,
         color: 'green',
       });
       navigate('/');
     } catch (error: any) {
       notifications.show({
-        title: 'Login Failed',
-        message: error.response?.data?.message || 'Invalid credentials. Please try again.',
+        title: 'Registration Failed',
+        message: error.response?.data?.message || 'Something went wrong. Please try again.',
         color: 'red',
       });
     } finally {
       setLoading(false);
     }
   };
- 
+
   return (
     <Box 
       style={{ 
@@ -66,7 +70,7 @@ const LoginPage = () => {
         display: 'flex', 
         alignItems: 'center', 
         justifyContent: 'center',
-        background: 'linear-gradient(135deg, var(--mantine-color-violet-light) 0%, var(--mantine-color-violet-light-hover) 100%)',
+        background: 'linear-gradient(135deg, var(--mantine-color-blue-light) 0%, var(--mantine-color-blue-light-hover) 100%)',
         position: 'relative',
         overflow: 'hidden'
       }}
@@ -77,7 +81,7 @@ const LoginPage = () => {
           position: 'absolute', 
           width: '600px', 
           height: '600px', 
-          background: 'var(--mantine-color-violet-2)', 
+          background: 'var(--mantine-color-blue-2)', 
           borderRadius: '50%', 
           top: '-10%', 
           right: '-5%', 
@@ -91,7 +95,7 @@ const LoginPage = () => {
           position: 'absolute', 
           width: '400px', 
           height: '400px', 
-          background: 'var(--mantine-color-violet-1)', 
+          background: 'var(--mantine-color-blue-1)', 
           borderRadius: '50%', 
           bottom: '-10%', 
           left: '-5%', 
@@ -100,12 +104,12 @@ const LoginPage = () => {
           zIndex: 0
         }} 
       />
- 
+
       <Container size={420} my={40} style={{ position: 'relative', zIndex: 1 }}>
         <Stack gap="xl">
           <Box style={{ textAlign: 'center' }}>
             <Group justify="center" mb="xs">
-              <IconFingerprint size={48} color="var(--mantine-color-violet-6)" stroke={2.5} />
+              <IconUserPlus size={48} color="var(--mantine-color-blue-6)" stroke={2.5} />
             </Group>
             <Title 
               order={1} 
@@ -113,16 +117,24 @@ const LoginPage = () => {
               fw={900} 
               style={{ letterSpacing: '-0.03em' }}
             >
-              VanDuy <Text span c="violet.6" inherit>Admin</Text>
+              Create <Text span c="blue.6" inherit>Account</Text>
             </Title>
             <Text c="dimmed" size="sm" mt={5}>
-              Welcome back! Please enter your details.
+              Join the admin panel to manage your profile.
             </Text>
           </Box>
- 
+
           <Paper withBorder shadow="xl" p={30} radius="lg">
             <form onSubmit={form.onSubmit(handleSubmit)}>
               <Stack gap="md">
+                <TextInput 
+                  label="Full Name" 
+                  placeholder="John Doe" 
+                  required 
+                  size="md"
+                  leftSection={<IconUser size={rem(18)} stroke={1.5} />}
+                  {...form.getInputProps('name')}
+                />
                 <TextInput 
                   label="Email" 
                   placeholder="your@email.com" 
@@ -133,12 +145,19 @@ const LoginPage = () => {
                 />
                 <PasswordInput 
                   label="Password" 
-                  placeholder="Your password" 
+                  placeholder="At least 8 characters" 
                   required 
-                  mt="md" 
                   size="md"
                   leftSection={<IconLock size={rem(18)} stroke={1.5} />}
                   {...form.getInputProps('password')}
+                />
+                <PasswordInput 
+                  label="Confirm Password" 
+                  placeholder="Repeat your password" 
+                  required 
+                  size="md"
+                  leftSection={<IconLock size={rem(18)} stroke={1.5} />}
+                  {...form.getInputProps('password_confirmation')}
                 />
                 
                 <Button 
@@ -148,32 +167,32 @@ const LoginPage = () => {
                   type="submit" 
                   loading={loading}
                   radius="md"
-                  rightSection={<IconLogin size={18} />}
+                  rightSection={<IconUserPlus size={18} />}
                   style={{
-                    background: 'linear-gradient(45deg, var(--mantine-color-violet-6) 0%, var(--mantine-color-violet-8) 100%)',
+                    background: 'linear-gradient(45deg, var(--mantine-color-blue-6) 0%, var(--mantine-color-blue-8) 100%)',
                     boxShadow: 'var(--mantine-shadow-md)'
                   }}
                 >
-                  Sign in
+                  Register
                 </Button>
               </Stack>
             </form>
 
             <Text ta="center" mt="md" size="sm">
-              Don't have an account?{' '}
-              <Anchor component={Link} to="/register" fw={700} c="violet.6">
-                Register here
+              Already have an account?{' '}
+              <Anchor component={Link} to="/login" fw={700} c="blue.6">
+                Login here
               </Anchor>
             </Text>
           </Paper>
- 
+
           <Text c="dimmed" size="xs" ta="center">
-            Authorized Personnel Only
+            Secured Admin Access
           </Text>
         </Stack>
       </Container>
     </Box>
   );
 };
- 
-export default LoginPage;
+
+export default RegisterPage;
